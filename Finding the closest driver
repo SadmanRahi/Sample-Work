@@ -1,0 +1,34 @@
+############################    Def function    ############################ 
+
+def closest_dispatch(locations,origin,destination):
+    temp_d = {}
+
+    for  driver in locations:
+        temp = locations[driver]
+        d1 = abs(temp[0] - origin[0]) + abs(temp[1] - origin[1])
+        temp_d[driver] = d1
+    closest = min(temp_d, key=temp_d.get)
+    movement = temp_d[closest] + (abs(origin[0]-destination[0])+abs(origin[1]-destination[1]))
+    
+    return closest, movement
+
+############################    Sample Run    ############################ 
+
+
+loc={'Abdul':[10.5,30], 'Beth':[-5,20], 'Cindy': [10,10], 'Dilan': [-10,-10]}
+trips=[]
+trips.append([[5,9.5],[20,6.5]])
+trips.append([[10,-5],[30,-3]])
+trips.append([[10,12],[10,7]])
+trips.append([[-3,8.5],[-10,5.3]])
+trips.append([[20,30],[-5,-6.4]])
+trips.append([[10,10],[-3,-7]])
+total={driver:0 for driver in loc}
+for orig,dest in trips:
+    closest,movement=closest_dispatch(loc,orig,dest)
+    print(f'{closest} served trip: {orig} --> {dest} \tMovement: {movement}')
+    loc[closest]=dest
+    total[closest]+=movement
+print('\nSummary:')
+for driver in loc:
+    print(f'{driver} ended at {loc[driver]}. \tDistance driven: {total[driver]}')
