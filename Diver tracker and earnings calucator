@@ -1,0 +1,50 @@
+
+### An fuction that focuses on following a single drive while calculating thier earnings and identifying the highest earnings areas ### 
+
+############## Def Function ############## 
+
+from numpy.random import default_rng
+def driver_movement(locations, initial,transition_probs, df_a, df_b, df_earnings, n, T):
+    rng=default_rng()
+    current = initial
+    t = 0
+    earnings = 0
+    timeList = [t]
+    locationList = [current]
+    earningsList = [earnings]
+    for i in range(n):
+        new = rng.choice(locations, p=transition_probs[current])
+        t += rng.uniform(df_a.loc[current,new], df_b.loc[current,new])
+        earnings += df_earnings.loc[current,new]
+        current = new
+        timeList.append(t)
+        locationList.append(current)
+        earningsList.append(earnings)
+        if t >= T:
+            break
+    return timeList, locationList, earningsList
+
+############## Sample Run ############## 
+
+
+import pandas as pd
+locations=['Downtown','Airport','Suburb A','Suburb B']
+initial='Suburb A'
+transition_probs={'Downtown': [0,0,0,1],\
+                 'Airport':[1,0,0,0],\
+                 'Suburb A':[1,0,0,0],\
+                 'Suburb B':[0,1,0,0]}
+df_a=df_b=pd.DataFrame([[0,30,20,15],\
+                       [50,0,60,30],\
+                       [25,80,0,50],\
+                       [20,40,50,0]],index=locations,columns=locations)
+df_earnings=pd.DataFrame([[0,20,15,10],\
+                         [40,0,50,30],\
+                         [18,50,0,30],\
+                         [15,30,40,0]],index=locations,columns=locations)
+t,l,e=driver_movement(locations,initial,transition_probs,df_a,df_b,df_earnings,10,480)
+print('Time\tLocation\tCumulative Earnings')
+for i in range(len(t)):
+    print(f'{t[i]}\t{l[i]:10}\t{e[i]}')
+    # The { :10} in f-string formatting is to make the table line up by making sure the output 
+    # is exactly 10 characters. Don't worry about it.
